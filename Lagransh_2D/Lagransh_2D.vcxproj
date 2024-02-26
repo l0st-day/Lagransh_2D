@@ -141,7 +141,7 @@
   <ItemGroup>
     <ClCompile Include="..\equations.cpp" />
     <ClCompile Include="..\readFile.cpp" />
-    <ClCompile Include="..\Reshala_3.0.cpp" />
+    <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\writeFile.cpp" />
   </ItemGroup>
   <ItemGroup>
