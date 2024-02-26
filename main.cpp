@@ -1,9 +1,7 @@
-﻿#include <vector>
+﻿#include <fstream>
 #include <iostream>
-//#include "zapis_object.h"
-//#include "uravnenia.h"
+#include "equations.h"
 #include "writeFile.h"
-//#include "vivod_xml.cpp"
 
 int main() 
 {
@@ -24,91 +22,88 @@ int main()
 	{
 		std:: cout << "Step:" << shag << "\n";
 		
-			SkorKoord(t, nodes, cells, parts, press);
-			
-			for (size_t i = 0; i != cells.size(); ++i) 
+		SpeedCoord(t, nodes, cells, parts, press);
+
+		for (size_t i = 0; i != cells.size(); ++i) 
+		{
+			Cell pseucell = cells[i];
+			Geometry(cells[i], pseucell, nodes);
+			Me Met;
+			Met.rachetcoeff(cells[i]);
+			if (cells[i].PID == 8)
 			{
-				Cell pseucell = cells[i];
-				Geometry(cells[i], pseucell, nodes);
-				Me Met;
-				Met.rachetcoeff(cells[i]);
-				if (Ych[i].PID == 8)
-				{
-					Met.urs(8, cells[i], pseucell);
-				}
-				else
-				{
-					Met.urs(11, cells[i], pseucell);
-				}
-				Defor(cells[i], pseucell, nodes, t);
-				PseudoVis(cells[i], pseucell);
-				Stress(cells[i], pseucell, nodes, parts, mats);
-				Energy(cells[i], pseucell);
-				cells[i] = std:: move(pseucell);
-				if ((isnan(Ych[i].A) == true) || (isinf(Ych[i].A) == true) || (isnan(Ych[i].ro) == true) || (isinf(Ych[i].ro) == true) ||
-					(isnan(Ych[i].p) == true) || (isinf(Ych[i].p) == true) || (isnan(Ych[i].c) == true) || (isinf(Ych[i].c) == true) ||
-					(isnan(Ych[i].err) == true) || (isinf(Ych[i].err) == true) || (isnan(Ych[i].erz) == true) || (isinf(Ych[i].erz) == true) ||
-					(isnan(Ych[i].ezz) == true) || (isinf(Ych[i].ezz) == true) || (isnan(Ych[i].e00) == true) || (isinf(Ych[i].e00) == true) ||
-					(isnan(Ych[i].delta_err) == true) || (isinf(Ych[i].delta_err) == true) || (isnan(Ych[i].delta_erz) == true) || (isinf(Ych[i].delta_erz) == true) ||
-					(isnan(Ych[i].delta_e00) == true) || (isinf(Ych[i].delta_e00) == true) || (isnan(Ych[i].delta_ezz) == true) || (isinf(Ych[i].delta_ezz) == true) ||
-					(isnan(Ych[i].Drr) == true) || (isinf(Ych[i].Drr) == true) || (isnan(Ych[i].Drz) == true) || (isinf(Ych[i].Drz) == true) ||
-					(isnan(Ych[i].Dzz) == true) || (isinf(Ych[i].Dzz) == true) || (isnan(Ych[i].D00) == true) || (isinf(Ych[i].D00) == true) ||
-					(isnan(Ych[i].sigma_rr) == true) || (isinf(Ych[i].sigma_rr) == true) || (isnan(Ych[i].sigma_rz) == true) || (isinf(Ych[i].sigma_rz) == true) ||
-					(isnan(Ych[i].sigma_zz) == true) || (isinf(Ych[i].sigma_zz) == true) || (isnan(Ych[i].sigma_00) == true) || (isinf(Ych[i].sigma_00) == true) ||
-					(isnan(Ych[i].sigma_rz) == true) || (isinf(Ych[i].sigma_rz) == true) || (isnan(Ych[i].sigma_rz) == true) || (isinf(Ych[i].sigma_rz) == true) ||
-					(isnan(Ych[i].qkomb) == true) || (isinf(Ych[i].qkomb) == true) || (isnan(Ych[i].q00) == true) || (isinf(Ych[i].q00) == true) ||
-					(isnan(Ych[i].qrr) == true) || (isinf(Ych[i].qrr) == true) || (isnan(Ych[i].qrz) == true) || (isinf(Ych[i].qrz) == true) ||
-					(isnan(Ych[i].qzz) == true) || (isinf(Ych[i].qzz) == true) || (isnan(Ych[i].E) == true) || (isinf(Ych[i].E) == true) ||
-					(isnan(Ych[i].M) == true) || (isinf(Ych[i].M) == true) || (isnan(Ych[i].V) == true) || (isinf(Ych[i].V) == true) ||
-					(isnan(Ych[i].r0) == true) || (isinf(Ych[i].r0) == true) || (isnan(Ych[i].z0) == true) || (isinf(Ych[i].z0) == true))
-				{
-					vivod(step, Uz, Ych, Pr);
-					std::cout << "NOMBER: " << Ych[i].YID << "\n";
-					std::cout << "Площадь: " << Ych[i].A << "\n";
-					std::cout << "Объем: " << Ych[i].V << "\n";
-					std::cout << "Плотность: " << Ych[i].ro << "\n";
-					std::cout << "Давление: " << Ych[i].p << "\n";
-					std::cout << "Скорость звука: " << Ych[i].c << "\n";
-					std::cout << "Площадь на половинном слое: " << A12 << "\n";
-					std::cout << "Объем на половинном слое: " << V12 << "\n";
-					std::cout << "Удельная скорость изменения объема: " << V12tV << "\n";
-					std::cout << "Скорость деформации rr: " << Ych[i].err << "\n";
-					std::cout << "Скорость деформации zz: " << Ych[i].ezz << "\n";
-					std::cout << "Скорость деформации rz: " << Ych[i].erz << "\n";
-					std::cout << "Скорость деформации 00: " << Ych[i].e00 << "\n";
-					std::cout << "Деформации rr: " << Ych[i].delta_err << "\n";
-					std::cout << "Деформации zz: " << Ych[i].delta_ezz << "\n";
-					std::cout << "Деформации rz: " << Ych[i].delta_erz << "\n";
-					std::cout << "Деформации 00: " << Ych[i].delta_e00 << "\n";
-					std::cout << "Девиатор rr: " << Ych[i].Drr << "\n";
-					std::cout << "Девиатор zz: " << Ych[i].Dzz << "\n";
-					std::cout << "Девиатор rz: " << Ych[i].Drz << "\n";
-					std::cout << "Девиатор 00: " << Ych[i].D00 << "\n";
-					std::cout << "Напряжение rr: " << Ych[i].sigma_rr << "\n";
-					std::cout << "Напряжение zz: " << Ych[i].sigma_zz << "\n";
-					std::cout << "Напряжение rz: " << Ych[i].sigma_rz << "\n";
-					std::cout << "Напряжение 00: " << Ych[i].sigma_00 << "\n";
-					std::cout << "Псевдовязкость: " << Ych[i].qkomb << "\n";
-					std::cout << "Псевдовязкость rr: " << Ych[i].qrr << "\n";
-					std::cout << "Псевдовязкость zz: " << Ych[i].qzz << "\n";
-					std::cout << "Псевдовязкость rz: " << Ych[i].qrz << "\n";
-					std::cout << "Псевдовязкость 00: " << Ych[i].q00 << "\n";
-					goto q101;
-				}
+				Met.urs(8, cells[i], pseucell);
 			}
-			for (unsigned int i = 0; i < Uz.size(); i++) {
-				Uz[i].vr = Uz[i].vrn;
-				Uz[i].vz = Uz[i].vzn;
-				Uz[i].r = Uz[i].rn;
-				Uz[i].z = Uz[i].zn;
+			else
+			{
+				Met.urs(11, cells[i], pseucell);
 			}
-			for (unsigned int i = 0; i < Ych.size(); i++) {
-				Kurant(cells[i]);
+			Defor(cells[i], pseucell, nodes, t);
+			PseudoVis(cells[i], pseucell);
+			Stress(cells[i], pseucell, nodes, parts, mats);
+			Energy(cells[i], pseucell);
+			cells[i] = std:: move(pseucell);
+			if ((isnan(cells[i].A) == true) || (isinf(cells[i].A) == true) || (isnan(cells[i].ro) == true) || (isinf(cells[i].ro) == true) ||
+				(isnan(cells[i].p) == true) || (isinf(cells[i].p) == true) || (isnan(cells[i].c) == true) || (isinf(cells[i].c) == true) ||
+				(isnan(cells[i].err) == true) || (isinf(cells[i].err) == true) || (isnan(cells[i].erz) == true) || (isinf(cells[i].erz) == true) ||
+				(isnan(cells[i].ezz) == true) || (isinf(cells[i].ezz) == true) || (isnan(cells[i].e00) == true) || (isinf(cells[i].e00) == true) ||
+				(isnan(cells[i].delta_err) == true) || (isinf(cells[i].delta_err) == true) || (isnan(cells[i].delta_erz) == true) || (isinf(cells[i].delta_erz) == true) ||
+				(isnan(cells[i].delta_e00) == true) || (isinf(cells[i].delta_e00) == true) || (isnan(cells[i].delta_ezz) == true) || (isinf(cells[i].delta_ezz) == true) ||
+				(isnan(cells[i].Drr) == true) || (isinf(cells[i].Drr) == true) || (isnan(cells[i].Drz) == true) || (isinf(cells[i].Drz) == true) ||
+				(isnan(cells[i].Dzz) == true) || (isinf(cells[i].Dzz) == true) || (isnan(cells[i].D00) == true) || (isinf(cells[i].D00) == true) ||
+				(isnan(cells[i].sigma_rr) == true) || (isinf(cells[i].sigma_rr) == true) || (isnan(cells[i].sigma_rz) == true) || (isinf(cells[i].sigma_rz) == true) ||
+				(isnan(cells[i].sigma_zz) == true) || (isinf(cells[i].sigma_zz) == true) || (isnan(cells[i].sigma_00) == true) || (isinf(cells[i].sigma_00) == true) ||
+				(isnan(cells[i].sigma_rz) == true) || (isinf(cells[i].sigma_rz) == true) || (isnan(cells[i].sigma_rz) == true) || (isinf(cells[i].sigma_rz) == true) ||
+				(isnan(cells[i].qkomb) == true) || (isinf(cells[i].qkomb) == true) || (isnan(cells[i].q00) == true) || (isinf(cells[i].q00) == true) ||
+				(isnan(cells[i].qrr) == true) || (isinf(cells[i].qrr) == true) || (isnan(cells[i].qrz) == true) || (isinf(cells[i].qrz) == true) ||
+				(isnan(cells[i].qzz) == true) || (isinf(cells[i].qzz) == true) || (isnan(cells[i].E) == true) || (isinf(cells[i].E) == true) ||
+				(isnan(cells[i].M) == true) || (isinf(cells[i].M) == true) || (isnan(cells[i].V) == true) || (isinf(cells[i].V) == true) ||
+				(isnan(cells[i].r0) == true) || (isinf(cells[i].r0) == true) || (isnan(cells[i].z0) == true) || (isinf(cells[i].z0) == true))
+			{
+				write(step, nodes, cells, parts);
+				std::cout << "NOMBER: " << cells[i].YID << "\n";
+				std::cout << "Площадь: " << cells[i].A << "\n";
+				std::cout << "Объем: " << cells[i].V << "\n";
+				std::cout << "Плотность: " << cells[i].ro << "\n";
+				std::cout << "Давление: " << cells[i].p << "\n";
+				std::cout << "Скорость звука: " << cells[i].c << "\n";
+				std::cout << "Скорость деформации rr: " << cells[i].err << "\n";
+				std::cout << "Скорость деформации zz: " << cells[i].ezz << "\n";
+				std::cout << "Скорость деформации rz: " << cells[i].erz << "\n";
+				std::cout << "Скорость деформации 00: " << cells[i].e00 << "\n";
+				std::cout << "Деформации rr: " << cells[i].delta_err << "\n";
+				std::cout << "Деформации zz: " << cells[i].delta_ezz << "\n";
+				std::cout << "Деформации rz: " << cells[i].delta_erz << "\n";
+				std::cout << "Деформации 00: " << cells[i].delta_e00 << "\n";
+				std::cout << "Девиатор rr: " << cells[i].Drr << "\n";
+				std::cout << "Девиатор zz: " << cells[i].Dzz << "\n";
+				std::cout << "Девиатор rz: " << cells[i].Drz << "\n";
+				std::cout << "Девиатор 00: " << cells[i].D00 << "\n";
+				std::cout << "Напряжение rr: " << cells[i].sigma_rr << "\n";
+				std::cout << "Напряжение zz: " << cells[i].sigma_zz << "\n";
+				std::cout << "Напряжение rz: " << cells[i].sigma_rz << "\n";
+				std::cout << "Напряжение 00: " << cells[i].sigma_00 << "\n";
+				std::cout << "Псевдовязкость: " << cells[i].qkomb << "\n";
+				std::cout << "Псевдовязкость rr: " << cells[i].qrr << "\n";
+				std::cout << "Псевдовязкость zz: " << cells[i].qzz << "\n";
+				std::cout << "Псевдовязкость rz: " << cells[i].qrz << "\n";
+				std::cout << "Псевдовязкость 00: " << cells[i].q00 << "\n";
+				goto q101;
 			}
+		}
+		for (Node& node : nodes) {
+			node.vr = node.vrn;
+			node.vz = node.vzn;
+			node.r = node.rn;
+			node.z = node.zn;
+		}
+		for (Cell& cell : cells) {
+			Kurant(cell);
+		}
 		
 		if (t >= step * T_zap)
 		{
-			vivod(step, Uz, Ych, Pr);
+			write(step, nodes, cells, parts);
 			step++;
 		}
 		shag++;
@@ -117,7 +112,7 @@ int main()
 		std::cout << "New time: " << t << "\n"; 
 		std::cout << "==============" << "\n";
 	};
-q101:;
+	q101:;
 	std::cout << "End" << "\n";
 	return 0;
 }
