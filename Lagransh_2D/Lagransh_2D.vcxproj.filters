@@ -21,7 +21,7 @@
     <ClCompile Include="..\readFile.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Reshala_3.0.cpp">
+    <ClCompile Include="..\main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="..\writeFile.cpp">
